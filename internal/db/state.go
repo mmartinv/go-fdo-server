@@ -5,6 +5,7 @@ package db
 
 import (
 	"context"
+	"crypto"
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/base64"
@@ -19,10 +20,21 @@ import (
 	"gorm.io/gorm"
 )
 
+// OwnerKeyEntry represents a loaded owner key with its certificate chain
+type OwnerKeyEntry struct {
+	Type      int
+	RsaBits   int
+	Signer    crypto.Signer
+	CertChain []*x509.Certificate
+}
+
 // State implements all FDO server state persistence interfaces using GORM
 type State struct {
-	DB     *gorm.DB
-	dbType string
+	DB                      *gorm.DB
+	dbType                  string
+	TrustedDeviceCACertPool *x509.CertPool
+	OwnerKeys               []crypto.PublicKey // Public keys for voucher verification
+	ownerKeyEntries         []OwnerKeyEntry    // Full key data including signers
 }
 
 type tokenKey struct{}
@@ -71,6 +83,7 @@ func InitDb(dbType, dsn string) (*State, error) {
 		&OwnerInfo{},
 		&RvInfo{},
 		&DeviceOnboarding{},
+		&DeviceCACertificate{},
 	)
 	if err != nil {
 		slog.Error("Failed to migrate database schema", "error", err)
