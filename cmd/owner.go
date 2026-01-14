@@ -40,7 +40,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// The owner server configuration
+// OwnerConfig The owner server configuration
 type OwnerConfig struct {
 	OwnerCertificate string `mapstructure:"cert"`
 	OwnerPrivateKey  string `mapstructure:"key"`
@@ -48,7 +48,7 @@ type OwnerConfig struct {
 	TO0InsecureTLS   bool   `mapstructure:"to0_insecure_tls"`
 }
 
-// Owner server configuration file structure
+// OwnerServerConfig Owner server configuration file structure
 type OwnerServerConfig struct {
 	FDOServerConfig `mapstructure:",squash"`
 	DeviceCA        DeviceCAConfig `mapstructure:"device_ca"`
@@ -121,13 +121,13 @@ var ownerCmd = &cobra.Command{
 	},
 }
 
-// Server represents the HTTP server
+// OwnerServer Server represents the HTTP server
 type OwnerServer struct {
 	handler http.Handler
 	config  HTTPConfig
 }
 
-// NewServer creates a new Server
+// NewOwnerServer creates a new Server
 func NewOwnerServer(config HTTPConfig, handler http.Handler) *OwnerServer {
 	return &OwnerServer{handler: handler, config: config}
 }
@@ -325,7 +325,7 @@ func serveOwner(config *OwnerServerConfig) error {
 	apiRouter.Handle("POST /owner/vouchers", handlers.InsertVoucherHandler([]crypto.PublicKey{state.ownerKey.Public()}))
 	apiRouter.HandleFunc("/owner/redirect", handlers.OwnerInfoHandler)
 	apiRouter.Handle("POST /owner/resell/{guid}", handlers.ResellHandler(to2Server))
-	httpHandler := api.NewHTTPHandler(handler, state.DB.DB).RegisterRoutes(apiRouter)
+	httpHandler := api.NewHTTPHandler(handler, state.DB).RegisterRoutes(apiRouter)
 
 	// Listen and serve
 	server := NewOwnerServer(config.HTTP, httpHandler)
