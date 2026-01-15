@@ -21,6 +21,7 @@ start_service_owner() {
   done
   cd ${owner_download_dir}
   run_go_fdo_server owner ${owner_service} owner ${owner_pid_file} ${owner_log} \
+    --owner-cert="${owner_crt}" \
     --owner-key="${owner_key}" \
     --device-ca-cert="${device_ca_crt}" \
     "${download_commands[@]}"
@@ -103,4 +104,7 @@ run_test() {
 }
 
 # Allow running directly
-[[ "${BASH_SOURCE[0]}" != "$0" ]] || { run_test; cleanup; }
+[[ "${BASH_SOURCE[0]}" != "$0" ]] || {
+  run_test
+  cleanup
+}

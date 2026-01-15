@@ -43,6 +43,7 @@ start_service_wget_httpd() {
 # Modified run_services function that adds wget support for owner service
 start_service_owner() {
   run_go_fdo_server owner ${owner_service} owner ${owner_pid_file} ${owner_log} \
+    --owner-cert="${owner_crt}" \
     --owner-key="${owner_key}" \
     --device-ca-cert="${device_ca_crt}" \
     --command-wget "${wget_source_url}"
@@ -152,4 +153,7 @@ run_test() {
 }
 
 # Allow running directly
-[[ "${BASH_SOURCE[0]}" != "$0" ]] || { run_test; cleanup; }
+[[ "${BASH_SOURCE[0]}" != "$0" ]] || {
+  run_test
+  cleanup
+}

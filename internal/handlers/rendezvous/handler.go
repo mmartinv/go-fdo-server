@@ -47,6 +47,18 @@ func bodySizeMiddleware(limitBytes int64, next http.Handler) http.HandlerFunc {
 	}
 }
 
+func (s *Rendezvous) acceptVoucher(ctx context.Context, ov fdo_lib.Voucher, requestedTTLSecs uint32) (ttlSecs uint32, err error) {
+	// Verify device certificate chain against trusted device CAs
+	if err := ov.VerifyDeviceCertChain(s.State.TrustedDeviceCACertPool); err != nil {
+		return 0, err
+	}
+	// TODO configure the maximum/minimum allowed TTL
+	if requestedTTLSecs < 30 {
+		return 30, nil
+	}
+	return requestedTTLSecs, nil
+}
+
 func (s *Rendezvous) Handler() http.Handler {
 	rendezvousServeMux := http.NewServeMux()
 	// Wire FDO Handler
@@ -55,6 +67,7 @@ func (s *Rendezvous) Handler() http.Handler {
 		TO0Responder: &fdo_lib.TO0Server{
 			Session:       s.State,
 			RVBlobs:       s.State,
+			AcceptVoucher: s.acceptVoucher,
 		},
 		TO1Responder: &fdo_lib.TO1Server{
 			Session: s.State,

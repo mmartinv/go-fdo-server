@@ -43,6 +43,7 @@ services:
     command:
       - --db-type=postgres
       - --db-dsn=host=rendezvous-db user=rendezvous password=Passw0rd dbname=rendezvous port=5432 sslmode=disable TimeZone=Europe/Madrid
+      - --device-ca-cert=${container_working_dir:-/workdir}/certs/device_ca.crt
       - --log-level=debug
       - rendezvous
       - rendezvous:8041
@@ -82,6 +83,7 @@ services:
       - --log-level=debug
       - owner
       - owner:8043
+      - --owner-cert=${container_working_dir:-/workdir}/certs/owner.crt
       - --owner-key=${container_working_dir:-/workdir}/certs/owner.key
       - --device-ca-cert=${container_working_dir:-/workdir}/certs/device_ca.crt
     depends_on:

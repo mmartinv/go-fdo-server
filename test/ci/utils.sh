@@ -113,7 +113,7 @@ log_success() {
   echo -e "✔" "$@"
 }
 
-log_error(){
+log_error() {
   echo -e "${RED}[ERROR]${NC} ❌" "$@"
   return 1
 }
@@ -126,7 +126,7 @@ test_fail() {
   log_error "Test FAILED!"
 }
 
-show_env(){
+show_env() {
   env -0 | sort -z | tr '\0' '\n'
 }
 
@@ -151,7 +151,7 @@ set_hostname() {
     sudo cp "${tmp_hosts}" /etc/hosts
     rm -f "${tmp_hosts}"
   else
-    echo "${ip} ${dns}" | sudo tee -a /etc/hosts > /dev/null
+    echo "${ip} ${dns}" | sudo tee -a /etc/hosts >/dev/null
   fi
 }
 
@@ -294,7 +294,7 @@ run_fido_device_onboard() {
     if [ ${i} -lt ${attempts} ]; then
       sleep 5
     fi
-    i=$((i+1))
+    i=$((i + 1))
   done
   return ${onboarded}
 }
@@ -317,8 +317,8 @@ run_go_fdo_server() {
   shift 5
   mkdir -p "$(dirname "${log}")"
   mkdir -p "$(dirname "${pid_file}")"
-  nohup "${bin_dir}/go-fdo-server" "${role}" "${address_port}" --db-type sqlite --db-dsn "file:${base_dir}/${name}.db" --log-level=debug "${@}" &> "${log}" &
-  echo -n $! > "${pid_file}"
+  nohup "${bin_dir}/go-fdo-server" "${role}" "${address_port}" --db-type sqlite --db-dsn "file:${base_dir}/${name}.db" --log-level=debug "${@}" &>"${log}" &
+  echo -n $! >"${pid_file}"
 }
 
 start_service_manufacturer() {
@@ -340,6 +340,7 @@ start_service_rendezvous() {
     extra_opts+=(--http-cert "${rendezvous_https_crt}" --http-key "${rendezvous_https_key}")
   fi
   run_go_fdo_server rendezvous ${rendezvous_service} rendezvous ${rendezvous_pid_file} ${rendezvous_log} \
+    --device-ca-cert="${device_ca_crt}" \
     "${extra_opts[@]}"
 }
 
@@ -353,6 +354,7 @@ start_service_owner() {
     extra_opts+=(--to0-insecure-tls)
   fi
   run_go_fdo_server owner ${owner_service} owner ${owner_pid_file} ${owner_log} \
+    --owner-cert="${owner_crt}" \
     --owner-key="${owner_key}" \
     --device-ca-cert="${device_ca_crt}" \
     "${extra_opts[@]}"
@@ -427,7 +429,7 @@ generate_service_certs() {
 }
 
 generate_https_certs() {
- for service in "${services[@]}"; do
+  for service in "${services[@]}"; do
     local service_protocol="${service}_protocol"
     [[ "${!service_protocol-}" = "https" ]] || continue
     local service_key="${service}_https_key"
@@ -517,7 +519,7 @@ verify_equal_files() {
   local file_2=$2
 
   for file in "${file_1}" "${file_2}"; do
-    [ -f "${file}" ] || log_error "File not found: ${file}";
+    [ -f "${file}" ] || log_error "File not found: ${file}"
   done
 
   [ "${file_1}" != "${file_2}" ] || return 0

@@ -14,6 +14,7 @@ services:
       - --log-level=debug
       - owner
       - new_owner:8045
+      - --owner-cert=${container_working_dir:-/workdir}/certs/owner.crt
       - --owner-key=${container_working_dir:-/workdir}/certs/new_owner.key
       - --device-ca-cert=${container_working_dir:-/workdir}/certs/device_ca.crt
     working_dir: ${container_working_dir:-/workdir}

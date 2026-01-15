@@ -13,3 +13,5 @@ http:
   # server's certificate, any intermediates, and the CA's certificate.
   ##cert: /etc/pki/go-fdo-server/rendezvous-https-example.crt
   ##key: /etc/pki/go-fdo-server/rendezvous-https-example.key
+device_ca:
+  cert: "/etc/pki/go-fdo-server/device-ca-example.crt"
