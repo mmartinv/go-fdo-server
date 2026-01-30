@@ -170,7 +170,6 @@ db:
 device_ca:
   cert: "${rpm_owner_home_dir}/device_ca.crt"
 owner:
-  cert: "${rpm_owner_home_dir}/owner.crt"
   key: "${rpm_owner_home_dir}/owner.key"
   reuse_credentials: "${owner_reuse_creds}"
   to0_insecure_tls: "${owner_to0_insecure_tls}"
