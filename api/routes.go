@@ -5,6 +5,7 @@ package api
 
 import (
 	"io"
+	"log/slog"
 	"net/http"
 
 	"golang.org/x/time/rate"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/fido-device-onboard/go-fdo-server/internal/db"
 	"github.com/fido-device-onboard/go-fdo-server/internal/handlers/health"
+	"github.com/fido-device-onboard/go-fdo-server/internal/state"
 )
 
 // HTTPHandler handles HTTP requests
@@ -61,7 +63,14 @@ func (h *HTTPHandler) RegisterRoutes(apiRouter *http.ServeMux) *http.ServeMux {
 		)
 		handler.Handle("/api/v1/", http.StripPrefix("/api/v1", apiHandler))
 	}
-	healthServer := health.NewServer(h.state)
+
+	healthState, err := state.InitHealthDB(h.state.DB)
+	if err != nil {
+		slog.Error("failed to initialize health database", "err", err)
+		return nil
+	}
+
+	healthServer := health.NewServer(healthState)
 	healthStrictHandler := health.NewStrictHandler(&healthServer, nil)
 	health.HandlerFromMux(healthStrictHandler, handler)
 
