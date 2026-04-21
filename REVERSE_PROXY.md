@@ -36,6 +36,7 @@ The FDO server exposes management APIs under the `/api/v1/` path prefix that req
 - **Owner Service** (typically port 8043): Management APIs for device ownership and onboarding
 
 The reverse proxy should:
+
 - **Require authentication** for all `/api/v1/*` requests  
 - **Allow unauthenticated access** to `/health` and `/fdo/101/msg/*` endpoints
 
@@ -65,6 +66,7 @@ sudo htpasswd -c /etc/httpd/fdo-mgmt.passwd admin
 ```
 
 **Important notes:**
+
 - Record the password you enter, as it will be hashed in the password file and cannot be recovered. You'll need this password for API authentication.
 - The `-c` flag creates a new password file, overwriting any existing file. For adding additional users later, omit the `-c` flag: `sudo htpasswd /etc/nginx/fdo-mgmt.passwd another_user`
 
@@ -439,12 +441,13 @@ curl -i -k https://fdo-owner.example.com/health
 
 2. **Certificate Management**: Replace `/path/to/your/cert.pem` and `/path/to/your/key.pem` with actual certificate paths. Consider using Let's Encrypt for free certificates.
 
-3. **Password Security**: Use strong passwords and consider implementing additional security measures like IP whitelisting.
+3. **Password Security**: Use strong passwords and consider implementing additional security measures like restricting access to approved IP addresses.
 
 4. **Monitoring**: Enable access logs to monitor API usage and potential security threats.
 
 5. **Rate Limiting**: The FDO server includes built-in rate limiting (2 requests/second, burst of 10). The reverse proxy can add additional protection if needed.
 
 For RHEL-specific documentation on reverse proxy setups, refer to:
+
 - [RHEL System Administrator's Guide - HTTP Servers](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/deploying_different_types_of_servers/setting-apache-http-server_deploying-different-types-of-servers)
 - [RHEL Security Guide - TLS Configuration](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/)
