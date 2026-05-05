@@ -124,7 +124,7 @@ func (s *Server) ListTrustedDeviceCACerts(ctx context.Context, request ListTrust
 	if err != nil {
 		slog.Error("Failed to list device CA certificates", "error", err)
 		return ListTrustedDeviceCACerts500JSONResponse{
-			InternalServerError: components.InternalServerError{
+			components.InternalServerErrorJSONResponse{
 				Message: "Failed to list device CA certificates",
 			},
 		}, nil
@@ -179,7 +179,7 @@ func (s *Server) ImportTrustedDeviceCACerts(ctx context.Context, request ImportT
 	if err != nil {
 		slog.Error("Failed to read request body", "error", err)
 		return ImportTrustedDeviceCACerts400JSONResponse{
-			BadRequest: components.BadRequest{
+			components.BadRequestJSONResponse{
 				Message: "Failed to read request body",
 			},
 		}, nil
@@ -198,7 +198,7 @@ func (s *Server) ImportTrustedDeviceCACerts(ctx context.Context, request ImportT
 	if err != nil {
 		slog.Error("Failed to import device CA certificates", "error", err)
 		return ImportTrustedDeviceCACerts500JSONResponse{
-			InternalServerError: components.InternalServerError{
+			components.InternalServerErrorJSONResponse{
 				Message: "Failed to import certificates",
 			},
 		}, nil
@@ -211,7 +211,7 @@ func (s *Server) ImportTrustedDeviceCACerts(ctx context.Context, request ImportT
 		if err := s.TrustedDeviceCACerts.LoadTrustedDeviceCAs(ctx); err != nil {
 			slog.Error("Failed to reload trusted device CA cert pool", "error", err)
 			return ImportTrustedDeviceCACerts500JSONResponse{
-				InternalServerError: components.InternalServerError{
+				components.InternalServerErrorJSONResponse{
 					Message: "Failed to reload trusted device CA certificates",
 				},
 			}, nil
@@ -250,14 +250,14 @@ func (s *Server) GetTrustedDeviceCACertByFingerprint(ctx context.Context, reques
 		if errors.Is(err, state.ErrDeviceCACertNotFound) {
 			slog.Debug("Device CA certificate not found", "fingerprint", request.Fingerprint)
 			return GetTrustedDeviceCACertByFingerprint404JSONResponse{
-				NotFound: components.NotFound{
+				components.NotFoundJSONResponse{
 					Message: "Device CA certificate not found",
 				},
 			}, nil
 		}
 		slog.Error("Failed to get device CA certificate", "error", err, "fingerprint", request.Fingerprint)
 		return GetTrustedDeviceCACertByFingerprint500JSONResponse{
-			InternalServerError: components.InternalServerError{
+			components.InternalServerErrorJSONResponse{
 				Message: "Failed to retrieve certificate",
 			},
 		}, nil
@@ -295,14 +295,14 @@ func (s *Server) DeleteTrustedDeviceCACert(ctx context.Context, request DeleteTr
 		if errors.Is(err, state.ErrDeviceCACertNotFound) {
 			slog.Debug("Device CA certificate not found", "fingerprint", request.Fingerprint)
 			return DeleteTrustedDeviceCACert404JSONResponse{
-				NotFound: components.NotFound{
+				components.NotFoundJSONResponse{
 					Message: "Device CA certificate not found",
 				},
 			}, nil
 		}
 		slog.Error("Failed to delete device CA certificate", "error", err, "fingerprint", request.Fingerprint)
 		return DeleteTrustedDeviceCACert500JSONResponse{
-			InternalServerError: components.InternalServerError{
+			components.InternalServerErrorJSONResponse{
 				Message: "Failed to delete certificate",
 			},
 		}, nil
@@ -312,7 +312,7 @@ func (s *Server) DeleteTrustedDeviceCACert(ctx context.Context, request DeleteTr
 	if err := s.TrustedDeviceCACerts.LoadTrustedDeviceCAs(ctx); err != nil {
 		slog.Error("Failed to reload trusted device CA cert pool", "error", err)
 		return DeleteTrustedDeviceCACert500JSONResponse{
-			InternalServerError: components.InternalServerError{
+			components.InternalServerErrorJSONResponse{
 				Message: "Failed to reload trusted device CA certificates",
 			},
 		}, nil
