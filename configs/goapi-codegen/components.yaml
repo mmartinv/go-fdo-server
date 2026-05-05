@@ -2,6 +2,7 @@
 package: components
 generate:
   models: true
+  strict-server: true
 output: handlers/components/models.gen.go
 output-options:
   # to make sure that all types are generated
